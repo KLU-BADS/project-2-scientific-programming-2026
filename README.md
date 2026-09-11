@@ -9,7 +9,8 @@
 ## Overview
 
 <!-- DESCRIBE PROJECT PURPOSE BELOW -->
-A minimal Julia package helping you to start your project. 
+A software tool that tracks late items in a supply chain and notifies the responsable person to take action
+
 <!-- DESCRIBE PROJECT PURPOSE ABOVE  -->
 
 ## Getting started
