@@ -9,7 +9,7 @@
 ## Overview
 
 <!-- DESCRIBE PROJECT PURPOSE BELOW -->
-A software tool that tracks late items in a supply chain and notifies the responsable person to take action
+A software tool that tracks late items in a supply chain and notifies the responsable person to take action.  
 
 <!-- DESCRIBE PROJECT PURPOSE ABOVE  -->
 
