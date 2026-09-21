@@ -136,8 +136,59 @@ The program produces an array with the project identification number, shipment i
 
 ```plantuml
 @startuml
-left to right direction
-(*) --> "print"
-"print" --> (*)
+title Activity - Delivery Status
+
+skinparam shadowing false
+skinparam defaultFontName SansSerif
+skinparam ActivityBackgroundColor #dae8fc
+skinparam ActivityBorderColor #6c8ebf
+skinparam ActivityDiamondBackgroundColor #fff2cc
+skinparam ActivityDiamondBorderColor #d6b656
+skinparam ArrowColor #333333
+skinparam ActivityStartColor #000000
+skinparam ActivityEndColor #000000
+
+start
+
+:Init
+(load & check data);
+
+repeat
+  :Read ShipID;
+
+  if (delActual < Today?) then (yes)
+    if (RDD < delActual?) then (yes)
+      :delStatus = late;
+    else (no)
+      :delStatus = onTime;
+    endif
+  else (no)
+    if (hubArrival != empty?) then (yes)
+      :Calc ETA (hub);
+    else (no)
+      if (pickupActual != empty?) then (yes)
+        :Calc ETA (pickupActual);
+      else (no)
+        :Calc ETA (pickupPlanned);
+      endif
+    endif
+
+    switch (ETA <= RDD?)
+    case (yes, outside\nrisk interval)
+      :delStatus = onTime;
+    case (inside\nrisk interval)
+      :delStatus = atRisk;
+    case (no, outside\nrisk interval)
+      :delStatus = urgent;
+    endswitch
+  endif
+
+  :Update delStatus;
+  :Update output matrix;
+repeat while (Shipment left?) is (yes) not (no)
+
+:Create report;
+
+stop
 @enduml
 ```
