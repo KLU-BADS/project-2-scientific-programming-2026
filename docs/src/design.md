@@ -103,7 +103,6 @@ ItemClassification --> DeliveryStatus   : status
 @enduml
 ```
 
-
 ## Components and responsibilities
 
 OrderItem represents a single line item from the internal order management database. It holds the item's identity, quantity, financial value, destination distribution centre, and the two key dates the programme works against: the Required Delivery Date (RDD) and the Customer Desired Date (CDD). Each order item is the primary unit being tracked.
@@ -190,5 +189,96 @@ repeat while (Shipment left?) is (yes) not (no)
 :Create report;
 
 stop
+@enduml
+```
+
+---
+
+# Entity Relationship Diagram (ERD)
+
+```plantuml
+@startuml
+
+left to right direction
+hide circle
+hide methods
+
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam roundcorner 0
+skinparam defaultFontName Arial
+skinparam defaultFontSize 13
+skinparam classAttributeIconSize 0
+
+skinparam class {
+    BackgroundColor #FFFFFF
+    HeaderBackgroundColor #000000
+    BorderColor #94A3B8
+    BorderThickness 1
+    AttributeFontColor #0F172A
+}
+
+skinparam ArrowColor #64748B
+skinparam ArrowThickness 1
+skinparam ArrowFontColor #0F172A
+
+class "<color:white>Internal DB</color>" as internal {
+    Active
+    --
+    Business Unit
+    --
+    Material
+    --
+    Item Code [PK]
+    --
+    Quantity
+    --
+    Destination Hub
+    --
+    Project ID
+    --
+    Project Chapter ID
+    --
+    k EUR
+    --
+    RDD
+    --
+    CDD
+}
+
+class "<color:white>SCM DB</color>" as scm {
+    Project ID MP1 Reference
+    --
+    Shipment ID
+    --
+    Sub shipment, delivery line, product code [Join key]
+    --
+    Sub shipment, delivery line, description
+    --
+    Sub shipment, delivery line, Quantity picked
+    --
+    Pickup city
+    --
+    Pickup country
+    --
+    Delivery city
+    --
+    Delivery country
+    --
+    {field} Leg 1, Pickup Planned (date)
+    --
+    {field} Leg 1, Pickup Actual (date)
+    --
+    {field} Leg 1, Hub Arrival (date)
+    --
+    {field} Leg n, Delivery Actual (date)
+    --
+    Leg n, Transport Mode
+    --
+    Leg 1, Carrier Name
+}
+
+internal::Item "1" -- "1" scm::product
+
 @enduml
 ```
