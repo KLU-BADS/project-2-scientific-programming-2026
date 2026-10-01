@@ -1,7 +1,7 @@
 
 #uses calculated ETA, RDD of current row of joined table and a risk interval as input
 
-function ProjectDeliveryStatus(ETA::Date, RDD::Date, RiskInterval::Int)
+function ShipmentDeliveryStatus(ETA::Date, RDD::Date, RiskInterval::Int)
     if ETA <= RDD - RiskInterval
         return 1 #on time
     elseif ETA >= RDD + RiskInterval
