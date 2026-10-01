@@ -1,16 +1,17 @@
 
+#uses calculated ETA, RDD of current row of joined table and a risk interval as input
+
 function ProjectDeliveryStatus(ETA::Date, RDD::Date, RiskInterval::Int)
     if ETA <= RDD - RiskInterval
-        deliveryStatus = "ON_TIME"
+        return 1 #on time
     elseif ETA >= RDD + RiskInterval
-        deliveryStatus = "URGENT"
+        return 2 #urgent
     else
-        deliveryStatus = "AT_RISK"
+        return 3 #at risk
     end
-    return deliveryStatus
 
 end
 
 
-# riskintervall in days (int)
-# deliveryStatus currently as string
+# Determines if the shipment is currently on time(1), at risk(2) or urgent(3)
+# Based on ETA, RDD and risk interval

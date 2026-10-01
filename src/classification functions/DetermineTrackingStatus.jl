@@ -1,15 +1,18 @@
 using Dates
-function DetermineTrackingStatus(shipID::Int)
-    if shipID.delActual < today() && shipID.delActual != missing
-        trackingStatus = "DELIVERED"
-    elseif shipID.hubArrival != missing
-        trackingStatus = "At_HUB" 
+
+#uses current row of joined table as input
+
+function DetermineTrackingStatus(row)
+    if row.actual_delivery_date < today() && row.actual_delivery_date != missing
+        return 1 #already delivered
+    elseif row.hub_arrival_date != missing
+        return 2 #at a Hub
     else
-        trackingStatus = "PICKUP_PLANNED"
+        return 3 #at supplier
     end   
-        return trackingStatus
+    
 end
 
-# using strings as tracking status for now, number probably better for future use
-# shipID structure needs to be defined in order to use this function
-# delActual and other dates need to be in Date format
+# Determines where the shipment was last seen.
+# Already Delivered(1), At a Hub(2) or at a Supplier(3) ['pickup planned']
+# To be used for ETA calculation
