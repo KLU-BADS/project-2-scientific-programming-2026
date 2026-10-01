@@ -1,4 +1,4 @@
-
+using Dates
 #uses hub_arrival_date, origin and destination city ID and the hub lanes matrix as input
 
 function ClassifyHub(HubDate::Date, origin_id, destination_id, hub_lanes)
