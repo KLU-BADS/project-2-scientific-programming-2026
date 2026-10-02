@@ -1,7 +1,13 @@
+using Dates
 
-function ClassifyPickup(PickupDate::Date, PickupCity, Destination)
-    Traveltime = PickupMatrix(PickupCity, Destination)
-    ETA::Date = PickupDate + Traveltime
+function ClassifyPickup(
+    PickupDate::Date,
+    PickupCity::String,
+    Destination::String
+)
+    TravelTime = PickupMatrix(PickupCity, Destination)
+    ETA = PickupDate + Day(TravelTime)
+
     return ETA
 end
 
