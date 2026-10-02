@@ -1,13 +1,14 @@
 
+# uses required delivery date and actual delivery date as input
 
-function ClassifyDelivered(RDD::Date, delActual::Date)
-    if RDD < delActual
-        deliveryStatus = "LATE"
+function ClassifyDelivered(RDD::Date, DeliveryDate::Date)
+    if RDD < DeliveryDate
+        DeliveryStatus = "LATE"
     else
-        deliveryStatus = "ON_TIME"
+        DeliveryStatus = "ON_TIME"
     end
-    return deliveryStatus
 
+    return DeliveryStatus
 end
 
-#deliveryStatus is a string for now, number probably better for future use
+# DeliveryStatus is currently a String
