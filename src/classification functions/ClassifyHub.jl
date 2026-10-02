@@ -1,10 +1,9 @@
 using Dates
-#uses hub_arrival_date, origin and destination city ID and the hub lanes matrix as input
+#uses hub_arrival_date, pickup_location_id and delivery_location_id and the hub lanes matrix as input
 
-function ClassifyHub(HubDate::Date, origin_id, destination_id, hub_lanes)
-    TravelTime = hub_lanes[(origin_id, destination_id)].day
-    ETA::Date = HubDate + TravelTime
-    return ETA
+function ClassifyHub(hub_arrival_date::Date, pickup_location_id, delivery_location_id, hub_lanes)
+    TravelTime = hub_lanes[(pickup_location_id, delivery_location_id)].day
+    return hub_arrival_date + day(TravelTime) # Estimated time of arrival
 end
 
 #calculate the Estimated Time of Arrival if shipment is at a Hub
