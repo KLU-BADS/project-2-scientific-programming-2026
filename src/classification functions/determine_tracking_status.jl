@@ -2,7 +2,7 @@ using Dates
 
 #uses current row of joined table as input
 
-function DetermineTrackingStatus(row)
+function determine_tracking_status(row)
    if ismissing(row)
         return 0 #missing
     end
