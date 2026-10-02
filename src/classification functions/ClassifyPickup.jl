@@ -1,16 +1,19 @@
 using Dates
 
+# Uses pickup_date, origin and destination city IDs,
+# and the pickup lanes matrix as input
+
 function ClassifyPickup(
     PickupDate::Date,
-    PickupCity::String,
-    Destination::String
+    origin_id,
+    destination_id,
+    pickup_lanes
 )
-    TravelTime = PickupMatrix(PickupCity, Destination)
-    ETA = PickupDate + Day(TravelTime)
+    TravelTime = pickup_lanes[(origin_id, destination_id)].day
+    ETA::Date = PickupDate + TravelTime
 
     return ETA
 end
 
-# naming conventions of matrices and variables TBD
-# make sure correct data form (date, INT for days etc.)
-# City and Destinaton as strings?
+# Calculate the Estimated Time of Arrival if shipment is picked up
+
