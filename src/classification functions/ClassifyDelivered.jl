@@ -1,14 +1,16 @@
+using Dates
 
-# uses required delivery date and actual delivery date as input
+# Uses required_delivery_date and actual_delivery_date as input
 
-function ClassifyDelivered(RDD::Date, DeliveryDate::Date)
-    if RDD < DeliveryDate
-        DeliveryStatus = "LATE"
+function classify_delivery(required_delivery_date::Date, actual_delivery_date::Date)
+    if required_delivery_date < actual_delivery_date
+        delivery_status = "LATE"
     else
-        DeliveryStatus = "ON_TIME"
+        delivery_status = "ON_TIME"
     end
 
-    return DeliveryStatus
+    return delivery_status
 end
 
-# DeliveryStatus is currently a String
+# Calculate the Delivery Status based on the Required Delivery Date
+# and the Actual Delivery Date
