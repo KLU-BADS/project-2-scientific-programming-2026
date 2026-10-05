@@ -3,7 +3,7 @@ using Dates
 
 function classify_hub(hub_arrival_date::Date, pickup_location_id, delivery_location_id, hub_lanes)
     travel_time = hub_lanes[(pickup_location_id, delivery_location_id)].day
-    return hub_arrival_date + day(travel_time) # Estimated time of arrival
+    return hub_arrival_date + Day(travel_time) # Estimated time of arrival
 end
 
 #calculate the Estimated Time of Arrival if shipment is at a Hub
