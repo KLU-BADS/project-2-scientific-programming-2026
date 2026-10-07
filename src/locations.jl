@@ -1,4 +1,4 @@
-
+# Initializing location id's based on the city names
 location_ids = Dict(
     "shanghai" => 1,
     "shenzhen" => 2,
@@ -18,6 +18,13 @@ location_ids = Dict(
     "herrsching dc" => 16,
     "leipzig dc" => 17
 )
+
+#= 
+Map a shipment location to its  numeric ID after normalizing the input
+(for example, trimming whitespace and standardizing casing), returning missing
+for missing values and raising an error if the cleaned location does not exist
+in the known location lookup table.
+=#
 
 function location_id(value, location_ids)
     # Normalize the location name so spelling and whitespace variations match.
@@ -39,8 +46,15 @@ function location_id(value, location_ids)
     return location_ids[name]
 end 
 
+
+#=
+Add normalized pickup and delivery location ID columns to a shipment table by
+converting each row's city names through the location lookup and storing the
+resulting integer IDs in separate vectors for later insertion into the DataFrame.
+=#
 function add_location_ids!(shipments, location_ids)
-    pickup_ids = Union{Missing, Int}[] #the vector accepts either missing values or integers 
+    # Union specifies the element type, meaning the value that the vector accepts. It either accepts missing values or integers 
+    pickup_ids = Union{Missing, Int}[] 
     delivery_ids = Union{Missing, Int}[]
 
     #Converting the city names into ids and saving them in the respective vector 

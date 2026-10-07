@@ -1,3 +1,4 @@
+# Builds the full path to a CSV file in the data folder, checks that the file exists and then reads it to Julia
 function read_table(data_folder, filename)
     # Result of joinpath() typically looks like this: "data/SCM_db.csv"
     filepath = joinpath(data_folder, filename)
@@ -12,6 +13,7 @@ function read_table(data_folder, filename)
 
 end
 
+# Load the raw source tables needed for downstream cleaning and joining.
 function read_raw_data(data_folder)
     return (
         internal = read_table(data_folder, "internal_db.csv"),

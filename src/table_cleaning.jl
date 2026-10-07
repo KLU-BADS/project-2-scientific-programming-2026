@@ -1,9 +1,10 @@
-
+#Converts every value in a column with a supplied converter, than stores the results in a directly in the same table 
 function convert_column!(table, column, converter)
-    converted = map(enumerate(table[!, column])) do (row, value)
+    # 
+    converted = map(enumerate(table[!, column])) do (row, value) # equivilant to map((row, value) -> converter(value), enumerate(table[!, column]))
         try
             converter(value)
-        # If there is an error catch err will saves in and sprint turns it into a text. Error then throws a new error and adds the column and row context
+        # If there is an error catch, err will saves it,  sprint turns it into a text. Error then throws a new error and adds the column and row context
         catch err
             detail = sprint(showerror, err)
             error("Column '$column', data row '$row': '$detail'")
