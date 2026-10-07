@@ -1,6 +1,6 @@
 using Dates
 
-# Calculates the Estimated Time of Arrival (ETA) of a shipment
+# Calculates the Estimated Time of Arrival (ETA) for a shipment
 # after it is picked up from the supplier.
 #
 # Inputs:
@@ -18,11 +18,12 @@ function classify_pickup(
     delivery_location_id,
     supplier_lanes
 )
-    # Get travel time from supplier to destination
     travel_time = supplier_lanes[
         (pickup_location_id, delivery_location_id)
     ].day
 
-    # Calculate and return the Estimated Time of Arrival
-    return pickup_date + Day(travel_time)
+    return pickup_date + Day(travel_time)  # Estimated time of arrival
 end
+
+# Returns the Estimated Time of Arrival if the shipment
+# is picked up from the supplier.
