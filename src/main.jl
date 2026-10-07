@@ -49,6 +49,46 @@ function classify_row(row, hub_lanes, supplier_lanes; risk_interval::Int=DEFAULT
             stage = stage, status = status, estimated_arrival = eta)
 end
 
+function summarize(report)
+    counts = Dict{Int,Int}()
+    for r in report
+        counts[r.status] = get(counts, r.status, 0) + 1
+    end
+    return (
+        total_items = length(report),
+        counts_by_status = counts,
+        immediate_attention_count = get(counts, STATUS_URGENT, 0),
+        pending_count = get(counts, STATUS_PENDING, 0),
+    )
+end
+
+function build_report(joined, hub_lanes, supplier_lanes; risk_interval::Int=DEFAULT_RISK_INTERVAL)
+    report = NamedTuple[]
+    issues = String[]
+
+    for row in eachrow(joined)
+        row.active === true || continue
+
+        if ismissing(row.pickup_location_id) || ismissing(row.delivery_location_id)
+            push!(issues, "Shipment $(row.shipment_id) (item $(row.item_code)): unrecognized pickup/delivery city, skipped")
+            continue
+        end
+        if ismissing(row.requested_delivery_date)
+            push!(issues, "Shipment $(row.shipment_id) (item $(row.item_code)): missing RDD, skipped")
+            continue
+        end
+
+        result = classify_row(row, hub_lanes, supplier_lanes; risk_interval=risk_interval)
+        if result === nothing
+            push!(issues, "Shipment $(row.shipment_id) (item $(row.item_code)): could not determine tracking stage, skipped")
+            continue
+        end
+        push!(report, result)
+    end
+
+    return report, issues
+end
+
 function main(; risk_interval::Int=DEFAULT_RISK_INTERVAL, write_output::Bool=true)
     report, issues = build_report(joined, hub_lanes, supplier_lanes; risk_interval=risk_interval)
     summary = summarize(report)
