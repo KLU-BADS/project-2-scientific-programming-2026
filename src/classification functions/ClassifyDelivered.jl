@@ -1,16 +1,23 @@
 using Dates
 
 # Uses required_delivery_date and actual_delivery_date as input
+#
+# Status codes:
+# 1 = Already delivered
+# 2 = At a hub
+# 3 = At supplier
+# 4 = On time
+# 5 = At risk
+# 6 = Urgent
+#
+# A shipment with an actual delivery date is classified
+# as already delivered.
 
-function classify_delivery(required_delivery_date::Date, actual_delivery_date::Date)
-    if required_delivery_date < actual_delivery_date
-        delivery_status = "LATE"
-    else
-        delivery_status = "ON_TIME"
-    end
-
-    return delivery_status
+function classify_delivery(
+    required_delivery_date::Date,
+    actual_delivery_date::Date
+)
+    return 1 # Already delivered
 end
 
-# Calculate the Delivery Status based on the Required Delivery Date
-# and the Actual Delivery Date
+# Determines the tracking status after the shipment has been delivered.
