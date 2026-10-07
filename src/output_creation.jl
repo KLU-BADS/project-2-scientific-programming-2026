@@ -46,6 +46,100 @@ small_df = DataFrame(Delivery_Status = del_values, ETA = final_time, Items_Numbe
 # Need to left join row collector with df
 report = leftjoin(df, small_df, on = :Items_Number)
 
+# Creating a function that print a PDF file
+function export_pdf_html(report::DataFrames, file_name = "Final_Report.html")
+    buf = IOBuffer()
+    show(buf, MIME("text/maekdown"), report, allrows = true, allcols = true)
+    md_table = String(take!(buf))
+
+    typst_doc = """
+    #set page (
+        paper: "a4"
+        margin: (top: 1.5cm, bottom: 1.5cm, left: 1cm, right: 1cm),
+        header: align(right)[Project Report - Page #counter(page).display()]
+    )
+    #set text(font: "Times New Roman", size: 11pt)
+    #raw("$md_tabel")
+"""
+typst_compile(typst_doc, file_name)
+end
+
+
+# Displaying of the final report both in VS Code and in the terminal
+if isdefined(Main, :vscodedisplay)
+    vscodedisplay(report)
+else
+    println("\n--- Preview of the Final Report ---")
+    show(report, maxrows = 50, allcols = true)
+    export_pdf_html(report)
+end
+
+#region search bar
+# HTML search bar code
+# function row_to_html(i)
+#     severity = flagging(report.Delivery_Status[i])
+#     return """<tr class = "$(severity)">
+#     <td>$(report.Project_ID[i])</td>
+#     <td>$(report.Shipment_ID[i])</td> 
+#     <td>$(report.Delivery_Status[i])</td> 
+# </tr>"""
+# end
+
+# creating a vector for the strings
+# row_html = []
+
+# creating a for loop that collect every string
+# for i in 1:nrow(report)
+#     push!(row_html, row_to_html(i))
+# end
+
+# merges the lines together
+# joined_rows = join(row_html, "\n")
+
+# header of the HTML table
+# header = """<tr>
+#     <th>Project ID</th>
+#     <th>Shipment ID</th>
+#     <th>Delivery Status</th>
+# </tr>"""
+
+# full table for the HTML
+# full_table = """<table>
+# $(header)
+# $(joined_rows)
+# </table>"""
+
+# CSS code for coloring the severity of the Delivery status
+# css = """
+# .critical {
+#     background-color: red;
+# }
+
+# .watch {
+#     background-color: yellow;
+# }
+# """
+# creating the document in HTML
+# document_html = """
+# <!DOCTYPE html>
+# <html>
+# <head>
+#     <style>
+#         $(css)
+#     </style>
+# </head>
+# <body>
+#     <input type="text" id="searchBox" placeholder="Type Project ID to filter">
+#     $(full_table)
+#     <script>
+#         let searchBox = document.getElementById("searchBox")
+#     </script>
+# </body>
+# </html>
+# """
+#endregion
+
+# region Pluto
 # Live search bar, search query variable
 # @bind search_query TextField(placeholder = "Type Project_ID to filter instantly")
 
@@ -81,3 +175,4 @@ report = leftjoin(df, small_df, on = :Items_Number)
 # item_code is the primary key in the joined csv
 # joined csv is the data set joined with the initial two data sets
 # look at the joined csv for getting the column I need
+# endregion
