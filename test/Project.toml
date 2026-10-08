@@ -1,3 +1,5 @@
 [deps]
+DataFrames = "a93c6f00-e57d-5684-b7b6-d8193f3e46c0"
+Dates = "ade2ca70-3891-5945-98fb-dc099432e06a"
 Project2 = "a87ea0c4-effc-4c39-b324-814a8a71756c"
 Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
