@@ -1,10 +1,7 @@
 # Integration: how the components work together, on the real data in data/.
-# These tests don't check exact status counts: delivered/in transit depends on today's date, so counts change from day to day. They check the hand-overs between components instead.
 
 @testset "Integration (real data)" begin
 
-    # Data Loader -> everything else. Fails on Linux (GitHub Actions) while
-    # data_io.jl asks for "internal_db.csv" / "scm_db.csv" in lowercase.
     data = load_data()
 
     @testset "Data Loader: load_data on the real files" begin
@@ -70,9 +67,10 @@
             @test report.Items_Number == data.joined.item_code
             # Items main skipped are exactly the rows without a status.
             @test count(ismissing, report.Delivery_Status) == nrow(data.joined) - length(row_collector)
-            # flagging works on every real status, including missing ones.
-            @test all(severity -> severity in (:critical, :late_arrival, :watch, :ok),
-                      Project2.flagging.(report.Delivery_Status))
+            # Every real row got a valid severity and an icon, including skipped ones.
+            @test all(severity -> severity in (:critical, :late_arrival, :watch, :ok), report.Severity)
+            @test !any(ismissing, report.Icon)
         end
     end
+
 end
