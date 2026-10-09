@@ -16,8 +16,8 @@ const STAGE_AT_SUPPLIER = 3           # determine_tracking_status
 const STATUS_ON_TIME = 4              # shipment_delivery_status
 const STATUS_AT_RISK = 5              # shipment_delivery_status
 const STATUS_URGENT = 6               # shipment_delivery_status
-const STATUS_DELIVERED_ON_TIME = 7    # classify_delivery
-const STATUS_DELIVERED_LATE = 8       # classify_delivery
+const STATUS_DELIVERED_ON_TIME = 7    # classify_delivered
+const STATUS_DELIVERED_LATE = 8       # classify_delivered
 
 ## Init: load & check data
 function load_data(data_folder = DEFAULT_DATA_FOLDER)
@@ -42,7 +42,7 @@ function classify_row(row, hub_lanes, supplier_lanes; risk_interval::Int = DEFAU
 
     if stage == STAGE_DELIVERED
         eta = row.actual_delivery_date
-        status = classify_delivery(row.requested_delivery_date, eta)
+        status = classify_delivered(row.requested_delivery_date, eta)
 
     elseif stage == STAGE_AT_HUB
         eta = classify_hub(row.hub_arrival_date, row.pickup_location_id,
