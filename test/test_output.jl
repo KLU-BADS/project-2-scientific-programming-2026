@@ -1,5 +1,3 @@
-# Output: src/output_creation.jl
-
 @testset "Output" begin
     if !isdefined(Project2, :all_together)
         @test_skip "output_creation.jl is not included in Project2 yet"
@@ -20,15 +18,12 @@
             @test Project2.flagging(7) == :ok
         end
 
-        @testset "style_for" begin
+        @testset "icon_for" begin
             # Each severity has its own icon.
-            @test Project2.style_for(:critical).icon == "🚩"
-            @test Project2.style_for(:late_arrival).icon == "❌"
-            @test Project2.style_for(:watch).icon == "⚠️"
-            @test Project2.style_for(:ok).icon == "✓"
-            # Each severity has its own colour, so no two look the same.
-            @test allunique([Project2.style_for(severity).color
-                             for severity in (:critical, :late_arrival, :watch, :ok)])
+            @test Project2.icon_for(:critical) == "🚩"
+            @test Project2.icon_for(:late_arrival) == "❌"
+            @test Project2.icon_for(:watch) == "⚠️"
+            @test Project2.icon_for(:ok) == "✓"
         end
 
         # Shared input for the three report-building functions:
@@ -69,9 +64,10 @@
             # Status and ETA come from row_collector; the skipped item B has none.
             @test isequal(report.Delivery_Status, [4, missing, 8])
             @test isequal(report.ETA, [Date(2026, 10, 20), missing, Date(2026, 9, 1)])
-            # Known gap (flags issue): the report has no Flag column yet.
-            # Shows as "Broken" until fixed; when it passes, change it to @test.
-            @test_broken "Flag" in names(report)
+            # Each row gets a severity from flagging and an icon from icon_for:
+            # A is on time (4), B has no status, C was delivered late (8).
+            @test report.Severity == [:ok, :watch, :late_arrival]
+            @test report.Icon == ["✓", "⚠️", "❌"]
         end
 
     end
