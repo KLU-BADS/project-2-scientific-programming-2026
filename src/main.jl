@@ -120,13 +120,15 @@ function main(; risk_interval::Int = DEFAULT_RISK_INTERVAL, data_folder = DEFAUL
         @warn issue
     end
 
-    # Create report (Output)
-    report = create_report(row_collector, data.joined)
-    export_pdf(report)
-
     summary = summarize(row_collector)
     @info "Classified $(summary.total_items) items, $(summary.immediate_attention_count) urgent, $(length(issues)) skipped"
 
+    # Create report (Output)
+    final_data_frame = building_dataframe(data.joined)
+    small_data_frame = building_small(row_collector)
+    report = all_together(final_data_frame, small_data_frame)
+    pdf_creation(report)
+    
     return (report = report, summary = summary, issues = issues)
 end
 
