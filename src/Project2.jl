@@ -8,6 +8,7 @@ classification logic.
 """
 module Project2
 
+
 # Packages used throughout the program
 using CSV
 using DataFrames
@@ -36,5 +37,6 @@ include("main.jl")
 
 # Functions to be exported
 export main, load_data, build_report, classify_row, summarize
+
 
 end # module Project2
