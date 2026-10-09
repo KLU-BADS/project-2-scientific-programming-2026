@@ -1,3 +1,7 @@
 [deps]
+DataFrames = "a93c6f00-e57d-5684-b7b6-d8193f3e46c0"
+Dates = "ade2ca70-3891-5945-98fb-dc099432e06a"
 Project2 = "a87ea0c4-effc-4c39-b324-814a8a71756c"
 Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
+PrettyTables = "08abe8d2-0d0c-5749-adfa-8a2ac140af0d"
+Typstry = "f0ed7684-a786-439e-b1e3-3b82803b501e"
