@@ -29,8 +29,7 @@ include(joinpath("classification functions", "classify_pickup.jl"))
 include(joinpath("classification functions", "shipment_delivery_status.jl"))
 
 # Output
-# Uncomment once output_creation.jl is merged into the repo.
-# include("output_creation.jl")
+include("output_creation.jl")
 
 # Main pipeline
 include("main.jl")
