@@ -6,8 +6,7 @@ using DataFrames
 include("helpers.jl")
 
 # Every @testset that fails is reported on its own, so the names say which
-# component broke.
-@testset "Project2.jl" begin
+# component broken
 
 
 @testset "Project2.jl" begin
