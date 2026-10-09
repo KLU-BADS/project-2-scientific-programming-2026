@@ -1,6 +1,7 @@
 # Libraries
 using DataFrames
 using Typstry
+using PrettyTables
 
 # Function that flag the late or urgent items
 function flagging(shipment_delivery_status)
@@ -54,9 +55,7 @@ end
 
 # Creating a function that print a PDF file
 function export_pdf_html(report::DataFrame, file_name = "Final_Report.pdf")
-    buf = IOBuffer()
-    show(buf, MIME("text/markdown"), report, allrows = true, allcols = true)
-    md_table = String(take!(buf))
+    table = pretty_table(String, report; backend = :typst)
 
     typst_doc = """
     #set page(
@@ -65,7 +64,7 @@ function export_pdf_html(report::DataFrame, file_name = "Final_Report.pdf")
         header: align(right)[Project Report - Page #counter(page).display()]
     )
     #set text(font: "Times New Roman", size: 11pt)
-    #raw("$md_table")
+    #$table
 """
 typst_compile(typst_doc, file_name)
 end
