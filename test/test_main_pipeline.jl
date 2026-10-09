@@ -17,7 +17,7 @@
         result = classify_row(make_row(actual_delivery_date = TODAY - Day(10),
                                        requested_delivery_date = TODAY - Day(5)),
                               TEST_HUB_LANES, TEST_SUPPLIER_LANES)
-        @test result == (stage = 1, status = 7, estimated_arrival = TODAY - Day(10))
+        @test result == (stage = 1, status = 7, eta = TODAY - Day(10))
 
         # Delivered after the RDD: status 8.
         result = classify_row(make_row(actual_delivery_date = TODAY - Day(3),
@@ -29,25 +29,25 @@
     @testset "classify_row: at a hub" begin
         # Hub today, lane 3 days -> ETA in 3 days, RDD in 20 days -> on time.
         result = classify_row(make_row(hub_arrival_date = TODAY), TEST_HUB_LANES, TEST_SUPPLIER_LANES)
-        @test result == (stage = 2, status = 4, estimated_arrival = TODAY + Day(3))
+        @test result == (stage = 2, status = 4, eta = TODAY + Day(3))
 
         # A delivery date in the future doesn't count yet, so main follow determine_tracking_status and uses the hub branch.
         result = classify_row(make_row(actual_delivery_date = TODAY + Day(5),
                                        hub_arrival_date = TODAY - Day(1)),
                               TEST_HUB_LANES, TEST_SUPPLIER_LANES)
         @test result.stage == 2
-        @test result.estimated_arrival == TODAY + Day(2)
+        @test result.eta == TODAY + Day(2)
     end
 
     @testset "classify_row: at supplier" begin
         # Both pickup dates known: the actual one is used (activity diagram "pickupActual != empty?"). Lane 5 days -> ETA = actual + 5.
         result = classify_row(make_row(pickup_planned_date = TODAY, pickup_actual_date = TODAY + Day(2)),
                               TEST_HUB_LANES, TEST_SUPPLIER_LANES)
-        @test result == (stage = 3, status = 4, estimated_arrival = TODAY + Day(7))
+        @test result == (stage = 3, status = 4, eta = TODAY + Day(7))
 
         # Only the planned date known: the planned one is used.
         result = classify_row(make_row(pickup_planned_date = TODAY), TEST_HUB_LANES, TEST_SUPPLIER_LANES)
-        @test result.estimated_arrival == TODAY + Day(5)
+        @test result.eta == TODAY + Day(5)
 
         # No pickup date at all: the row can't be classified -> nothing.
         @test classify_row(make_row(), TEST_HUB_LANES, TEST_SUPPLIER_LANES) === nothing
