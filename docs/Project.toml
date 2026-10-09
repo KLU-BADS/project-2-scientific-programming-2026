@@ -3,6 +3,8 @@ Documenter = "e30172f5-a6a5-5a46-863b-614d45cd2de4"
 DocumenterPlantUML = "ee5590a8-faa9-47ff-a03b-b69c10a769fd"
 PlantUML = "69ad847d-c018-4c53-a279-bc41134dba09"
 Project2 = "a87ea0c4-effc-4c39-b324-814a8a71756c"
+Typstry = "f0ed7684-a786-439e-b1e3-3b82803b501e"
+PrettyTables = "08abe8d2-0d0c-5749-adfa-8a2ac140af0d"
 
 [compat]
 Documenter = "1"

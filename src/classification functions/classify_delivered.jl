@@ -13,7 +13,7 @@ using Dates
 # 7 = Delivered on time
 # 8 = Delivered late
 
-function classify_delivery(
+function classify_delivered(
     required_delivery_date::Date,
     actual_delivery_date::Date
 )
