@@ -49,16 +49,16 @@
         @test_throws KeyError Project2.classify_pickup(Date(2026, 10, 1), 8, 17, TEST_SUPPLIER_LANES)
     end
 
-    @testset "classify_delivery" begin
+    @testset "classify_delivered" begin
         # Arguments: (required delivery date, actual delivery date).
         # Delivered before the RDD -> 7 (delivered on time).
-        @test Project2.classify_delivery(Date(2026, 10, 15), Date(2026, 10, 10)) == 7
+        @test Project2.classify_delivered(Date(2026, 10, 15), Date(2026, 10, 10)) == 7
         # Boundary: delivered on the RDD itself still counts as on time.
-        @test Project2.classify_delivery(Date(2026, 10, 15), Date(2026, 10, 15)) == 7
+        @test Project2.classify_delivered(Date(2026, 10, 15), Date(2026, 10, 15)) == 7
         # Boundary: one day after the RDD -> 8 (delivered late).
-        @test Project2.classify_delivery(Date(2026, 10, 15), Date(2026, 10, 16)) == 8
+        @test Project2.classify_delivered(Date(2026, 10, 15), Date(2026, 10, 16)) == 8
         # Clearly late -> 8.
-        @test Project2.classify_delivery(Date(2026, 10, 15), Date(2026, 11, 1)) == 8
+        @test Project2.classify_delivered(Date(2026, 10, 15), Date(2026, 11, 1)) == 8
     end
 
     @testset "shipment_delivery_status" begin
