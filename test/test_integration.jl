@@ -52,4 +52,27 @@
         @test summary.total_items == length(row_collector)
         @test sum(values(summary.counts_by_status)) == summary.total_items
     end
+
+    @testset "Main -> Output: row_collector format" begin
+        # Each entry is exactly (item_code::String, status::Int, ETA::Date),
+        # what Output reads with getindex.(row_collector, 1 / 2 / 3).
+        @test all(entry -> entry isa Tuple{String, Int, Date}, row_collector)
+    end
+
+    @testset "Main -> Output: report on the real run" begin
+        if !isdefined(Project2, :all_together)
+            @test_skip "output_creation.jl is not included in Project2 yet"
+        else
+            report = Project2.all_together(Project2.building_dataframe(data.joined),
+                                           Project2.building_small(row_collector))
+            # One report row per item, in the order of joined.
+            @test nrow(report) == nrow(data.joined)
+            @test report.Items_Number == data.joined.item_code
+            # Items main skipped are exactly the rows without a status.
+            @test count(ismissing, report.Delivery_Status) == nrow(data.joined) - length(row_collector)
+            # flagging works on every real status, including missing ones.
+            @test all(severity -> severity in (:critical, :late_arrival, :watch, :ok),
+                      Project2.flagging.(report.Delivery_Status))
+        end
+    end
 end
