@@ -19,15 +19,15 @@ function flagging(shipment_delivery_status)
 end
 
 # Function that colors each row based on the severity of the Delivery Status and add a Unicode to it
-function style_for(severity)
+function icon_for(severity)
     if severity == :critical
-        return (color = "#FFCDD2", icon = "🚩")
+        return "🚩"
     elseif severity == :late_arrival
-        return (color = "#F3E5F5", icon = "❌")
+        return "❌"
     elseif severity == :watch
-        return (color = "#FFF9C4", icon = "⚠️")
+        return "⚠️"
     else
-        return (color = "#C8E6C9", icon = "✓")
+        return "✓"
     end
 end
 
@@ -50,11 +50,13 @@ end
 # Need to left join row collector with df
 function all_together(final_data_frame, small_data_frame)
     report = leftjoin(final_data_frame, small_data_frame, on = :Items_Number, order = :left)
+    report.Severity = flagging.(report.Delivery_Status)
+    report.Icon = icon_for.(report.Severity)
     return report
 end 
 
 # Creating a function that print a PDF file
-function export_pdf_html(report::DataFrame, file_name = "Final_Report.pdf")
+function export_pdf(report::DataFrame, file_name = "Final_Report.pdf")
     table = pretty_table(String, report; backend = :typst)
 
     typst_doc = """
@@ -63,7 +65,7 @@ function export_pdf_html(report::DataFrame, file_name = "Final_Report.pdf")
         margin: (top: 1.5cm, bottom: 1.5cm, left: 1cm, right: 1cm),
         header: align(right)[Project Report - Page #counter(page).display()]
     )
-    #set text(font: "Times New Roman", size: 11pt)
+    #set text(font: ("Libertinus Serif", "Segoe UI Emoji", "Apple Color Emoji"), size: 11pt)
     #$table
 """
 typst_compile(typst_doc, file_name)
@@ -79,5 +81,5 @@ function pdf_creation(report)
         println("\n--- Preview of the Final Report ---")
         show(report, maxrows = 50, allcols = true)
     end
-    return export_pdf_html(report)
+    return export_pdf(report)
 end
