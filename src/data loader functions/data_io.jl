@@ -16,8 +16,8 @@ end
 # Load the raw source tables needed for downstream cleaning and joining.
 function read_raw_data(data_folder)
     return (
-        internal = read_table(data_folder, "internal_db.csv"),
-        scm = read_table(data_folder, "scm_db.csv"),
+        internal = read_table(data_folder, "Internal_db.csv"),
+        scm = read_table(data_folder, "SCM_db.csv"),
         supplier_lanes = read_table(data_folder, "lm_supplier_dc.csv"), # refers to delivery from suppliers to our logistics center
         hub_lanes = read_table(data_folder, "lm_logistics_dc.csv") # referts to the delivery from an intermediary fullfillment center to our logistics center
     )
