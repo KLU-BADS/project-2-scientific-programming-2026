@@ -1,4 +1,12 @@
-# Builds the full path to a CSV file in the data folder, checks that the file exists and then reads it to Julia
+"""
+    read_table(data_folder, filename) -> DataFrame
+
+Read one CSV file from `data_folder`, with every column read as text.
+
+Parsing into numbers, dates and booleans happens later, explicitly, in the
+cleaning functions. Throws an `ArgumentError` naming the path if the file
+does not exist.
+"""
 function read_table(data_folder, filename)
     # Result of joinpath() typically looks like this: "data/SCM_db.csv"
     filepath = joinpath(data_folder, filename)
@@ -13,7 +21,17 @@ function read_table(data_folder, filename)
 
 end
 
-# Load the raw source tables needed for downstream cleaning and joining.
+"""
+    read_raw_data(data_folder) -> NamedTuple
+
+Read the four input files and return them as
+`(internal, scm, supplier_lanes, hub_lanes)`:
+
+- `internal`: `Internal_db.csv`, the internal order items
+- `scm`: `SCM_db.csv`, the shipments from the SCM system
+- `supplier_lanes`: `lm_supplier_dc.csv`, transit days from the supplier to each distribution center
+- `hub_lanes`: `lm_logistics_dc.csv`, remaining transit days from a hub to each distribution center
+"""
 function read_raw_data(data_folder)
     return (
         internal = read_table(data_folder, "Internal_db.csv"),
@@ -23,6 +41,13 @@ function read_raw_data(data_folder)
     )
 end
 
+"""
+    export_tables(joined, hub_lanes, supplier_lanes, output_folder) -> nothing
+
+Write the cleaned data to `output_folder` (created if needed) as
+`joined.csv`, `hub_lanes.csv` and `supplier_lanes.csv`, for checking the
+cleaned tables by hand. Not called by `main`.
+"""
 function export_tables(joined, hub_lanes, supplier_lanes, output_folder)
     # Create the folder if it does not already exist.
     mkpath(output_folder)

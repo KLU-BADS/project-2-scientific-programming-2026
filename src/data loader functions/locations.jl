@@ -1,4 +1,11 @@
-# Initializing location id's based on the city names
+"""
+    location_ids :: Dict{String, Int}
+
+Numeric ID for every known location, keyed by its cleaned name: 13 pickup
+cities (`"shanghai"` = 1 … `"hamburg"` = 13) and 4 distribution centers
+(`"hamburg dc"` = 14, `"boeblingen dc"` = 15, `"herrsching dc"` = 16,
+`"leipzig dc"` = 17).
+"""
 location_ids = Dict(
     "shanghai" => 1,
     "shenzhen" => 2,
@@ -19,13 +26,20 @@ location_ids = Dict(
     "leipzig dc" => 17
 )
 
-#= 
-Map a shipment location to its  numeric ID after normalizing the input
-(for example, trimming whitespace and standardizing casing), returning missing
-for missing values and raising an error if the cleaned location does not exist
-in the known location lookup table.
-=#
+"""
+    location_id(value, location_ids) -> Union{Int, Missing}
 
+Look up the numeric ID of a location name.
+
+The name is normalized with `clean_location` first, so spelling and
+whitespace variants match. Returns `missing` for a missing name and throws
+an error for a name that is not in `location_ids`, instead of guessing.
+
+# Examples
+```julia
+location_id("Antwerpen", location_ids)   # 8
+```
+"""
 function location_id(value, location_ids)
     # Normalize the location name so spelling and whitespace variations match.
     name = clean_location(value)
@@ -47,11 +61,15 @@ function location_id(value, location_ids)
 end 
 
 
-#=
-Add normalized pickup and delivery location ID columns to a shipment table by
-converting each row's city names through the location lookup and storing the
-resulting integer IDs in separate vectors for later insertion into the DataFrame.
-=#
+"""
+    add_location_ids!(shipments, location_ids) -> shipments
+
+Add the columns `pickup_location_id` and `delivery_location_id` to a
+shipment table, changing it in place.
+
+Each row's `pickup_city` and `delivery_city` are converted with
+`location_id`; a missing city gives a missing ID.
+"""
 function add_location_ids!(shipments, location_ids)
     # Union specifies the element type, meaning the value that the vector accepts. It either accepts missing values or integers 
     pickup_ids = Union{Missing, Int}[] 
