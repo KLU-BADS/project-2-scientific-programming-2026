@@ -70,5 +70,20 @@
             @test report.Icon == ["✓", "⚠️", "❌"]
         end
 
+        @testset "export_report_csv" begin
+            report = Project2.all_together(Project2.building_dataframe(joined),
+                                           Project2.building_small(row_collector))
+            mktempdir() do temp_dir
+                file_name = joinpath(temp_dir, "report.csv")
+                @test Project2.export_report_csv(report, file_name) == file_name
+                @test isfile(file_name)
+
+                exported = CSV.read(file_name, DataFrame; types = String)
+                @test names(exported) == names(report)
+                @test exported.Items_Number == ["A", "B", "C"]
+                @test exported.Severity == ["ok", "watch", "late_arrival"]
+            end
+        end
+
     end
 end

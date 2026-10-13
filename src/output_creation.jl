@@ -1,4 +1,5 @@
 # Libraries
+using CSV
 using DataFrames
 using Typstry
 using PrettyTables
@@ -54,6 +55,12 @@ function all_together(final_data_frame, small_data_frame)
     report.Icon = icon_for.(report.Severity)
     return report
 end 
+
+# Save the final report table as a CSV file.
+function export_report_csv(report::DataFrame, file_name = "Final_Report.csv")
+    CSV.write(file_name, report)
+    return file_name
+end
 
 # Creating a function that print a PDF file
 function export_pdf(report::DataFrame, file_name = "Final_Report.pdf")
