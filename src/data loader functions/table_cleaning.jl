@@ -8,7 +8,6 @@ If a value cannot be converted, a new error is thrown that names the column
 and the data row, followed by the original message, e.g.
 `Column 'active', data row '2': 'ArgumentError: ...'`.
 """
-#Converts every value in a column with a supplied converter, than stores the results in a directly in the same table 
 function convert_column!(table, column, converter)
     # 
     converted = map(enumerate(table[!, column])) do (row, value) # equivilant to map((row, value) -> converter(value), enumerate(table[!, column]))
@@ -50,11 +49,7 @@ function clean_internal(raw_table)
         "k EUR" => :k_eur,
         "RDD" => :requested_delivery_date,
         "CDD" => :actual_delivery_date 
-    )
-
-    #= Calls the function clean_text and checks whether the transformation was successful, we are just using this function to  
-    also strip out values, remember all values are intially strings and are then turned into the respective data format 
-        =#    
+    )  
     for column in names(table)
         convert_column!(table, column, clean_text)
     end 
@@ -101,11 +96,7 @@ function clean_scm(raw_table)
         "Leg n, Delivery Actual (date)" => :scm_actual_delivery_date,
         "Leg n, Transport Mode" => :transport_mode,
         "Leg 1, Carrier Name" => :carrier_name
-    )
-
-    #= Calls the function clean_text and checks whether the transformation was successful, we are just using this function to  
-    also strip out values, remember all values are intially strings and are then turned into the respective data format 
-        =#    
+    )   
     for column in names(table)
         convert_column!(table, column, clean_text)
     end
@@ -145,12 +136,9 @@ and converts every day value with `parse_lane_days`. Changes `table` in
 place and returns it.
 """
 function clean_lane_matrix(table)
-    # Cleaning the origing city which are stated in the first column first using the clean_location function 
     origin_column = names(table)[1]
     convert_column!(table, origin_column, clean_location)
 
-    #= Cleaning the destination names which are stated in the first row, 
-    while removing the first column which just contains "origin city/ distribution center" =#
     destination_columns = names(table)[2:end]
 
     for column in destination_columns
