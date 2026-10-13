@@ -1,11 +1,31 @@
+"""
+    Lane(origin_id, destination_id, day)
 
+One lane of a lane matrix: the transit time `day` (in days) from the
+location `origin_id` to the distribution center `destination_id`.
+"""
 struct Lane
     origin_id::Int
     destination_id::Int
     day::Int
 end 
 
-# Converts the origin and destination names into numeric IDs using location_id()
+"""
+    build_lane_lookup(matrix, location_ids) -> Dict{Tuple{Int, Int}, Lane}
+
+Turn a cleaned lane matrix into a lookup keyed by
+`(origin ID, destination ID)`.
+
+Every origin row and destination column becomes one `Lane`; names are
+converted with `location_id`. Throws an error if an origin, destination or
+day value is missing. With the current data, each lane file gives
+13 × 4 = 52 lanes.
+
+# Examples
+```julia
+hub_lanes[(7, 17)].day   # 3 (Rotterdam → Leipzig DC)
+```
+"""
 function build_lane_lookup(matrix, location_ids)
     lanes = Dict{Tuple{Int, Int}, Lane}()
 
@@ -42,7 +62,13 @@ function build_lane_lookup(matrix, location_ids)
     return lanes
 end 
 
+"""
+    lanes_to_dataframe(lane) -> DataFrame
 
+Turn a lane lookup back into a table with the columns `origin_id`,
+`destination_id` and `day`, sorted by origin and destination. Used by
+`export_tables`.
+"""
 function lanes_to_dataframe(lane)
     table = DataFrame(
         origin_id = Int[],
