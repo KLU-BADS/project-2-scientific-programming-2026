@@ -1,18 +1,23 @@
 using Dates
 
-# Classifies the delivery performance based on the
-# required delivery date and actual delivery date.
-#
-# Status codes:
-# 1 = Already delivered
-# 2 = At a hub
-# 3 = At supplier
-# 4 = On time
-# 5 = At risk
-# 6 = Urgent
-# 7 = Delivered on time
-# 8 = Delivered late
+"""
+    classify_delivered(required_delivery_date::Date, actual_delivery_date::Date) -> Int
 
+Grade an item that has already been delivered against its requested
+delivery date (RDD):
+
+- `7` (delivered on time): delivered on or before the RDD
+- `8` (delivered late): delivered after the RDD
+
+Status codes used across the project: 1 already delivered, 2 at a hub,
+3 at supplier, 4 on time, 5 at risk, 6 urgent, 7 delivered on time,
+8 delivered late.
+
+# Examples
+```julia
+classify_delivered(Date(2026, 9, 29), Date(2026, 9, 26))   # 7
+```
+"""
 function classify_delivered(
     required_delivery_date::Date,
     actual_delivery_date::Date
@@ -23,6 +28,3 @@ function classify_delivered(
         return 7  # Delivered on time
     end
 end
-
-# Determines the final delivery status by comparing
-# the required delivery date with the actual delivery date.
