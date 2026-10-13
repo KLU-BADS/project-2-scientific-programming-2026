@@ -7,7 +7,8 @@ function determine_tracking_status(row)
         return 0 #missing
     end
 
-
+# Using 07/09/2026 instead of today() 
+# The RawData is from the past, using today breaks the logic of the program
     if !ismissing(row.actual_delivery_date) && row.actual_delivery_date < today()
         return 1 #already delivered
     elseif !ismissing(row.hub_arrival_date)
