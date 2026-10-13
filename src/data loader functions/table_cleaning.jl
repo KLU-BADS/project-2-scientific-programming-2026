@@ -1,3 +1,13 @@
+"""
+    convert_column!(table, column, converter) -> table
+
+Apply `converter` to every value of one column and store the result in the
+same column, changing `table` in place.
+
+If a value cannot be converted, a new error is thrown that names the column
+and the data row, followed by the original message, e.g.
+`Column 'active', data row '2': 'ArgumentError: ...'`.
+"""
 #Converts every value in a column with a supplied converter, than stores the results in a directly in the same table 
 function convert_column!(table, column, converter)
     # 
@@ -15,7 +25,19 @@ function convert_column!(table, column, converter)
     return table
 end
 
+"""
+    clean_internal(raw_table) -> DataFrame
 
+Clean the internal order table (`Internal_db.csv`).
+
+Keeps and renames nine columns: Active → `active`, Business Unit →
+`business_unit`, Material → `material`, Item Code → `item_code`, Quantity →
+`quantity`, Project ID → `project_id`, k EUR → `k_eur`, RDD →
+`requested_delivery_date`, CDD → `actual_delivery_date`. All values are
+trimmed with `clean_text`, then `active` becomes `Bool`, `quantity` and
+`k_eur` become `Float64` and both dates become `Date`. Other columns are
+dropped.
+"""
 function clean_internal(raw_table)
     table = select(
         raw_table,
@@ -51,7 +73,18 @@ function clean_internal(raw_table)
     return table
 end 
 
+"""
+    clean_scm(raw_table) -> DataFrame
 
+Clean the shipment table from the SCM system (`SCM_db.csv`).
+
+Keeps and renames thirteen columns, including `product_code` (from
+"Sub shipment, delivery line, product code"), which `load_data` matches to
+`item_code`, and the milestone dates `pickup_planned_date`,
+`pickup_actual_date`, `hub_arrival_date` and `scm_actual_delivery_date`.
+Cities are normalized with `clean_location`, countries and transport mode
+are lowercased, and the four dates become `Date`.
+"""
 function clean_scm(raw_table)
     table = select(
         raw_table,
@@ -101,7 +134,16 @@ function clean_scm(raw_table)
     return table
 end
 
+"""
+    clean_lane_matrix(table) -> DataFrame
 
+Clean a lane matrix (origin cities in the first column, distribution centers
+as column headers, transit days in the cells).
+
+Normalizes the origin names and the column headers with `clean_location`
+and converts every day value with `parse_lane_days`. Changes `table` in
+place and returns it.
+"""
 function clean_lane_matrix(table)
     # Cleaning the origing city which are stated in the first column first using the clean_location function 
     origin_column = names(table)[1]
