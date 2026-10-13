@@ -1,14 +1,23 @@
 using Dates
 
-#uses current row of joined table as input
+"""
+    determine_tracking_status(row) -> Int
 
+Decide where the shipment of one row of `joined` was last seen. The checks
+run in this order, as in the activity diagram:
+
+- `0`: the row is `missing`
+- `1` (already delivered): `actual_delivery_date` is known and before `today()`
+- `2` (at a hub): `hub_arrival_date` is known
+- `3` (at supplier): otherwise
+
+Because of `today()`, the same row can move from stage 2 or 3 to stage 1 as
+the calendar moves on.
+"""
 function determine_tracking_status(row)
    if ismissing(row)
         return 0 #missing
     end
-
-# Using 07/09/2026 instead of today() 
-# The RawData is from the past, using today breaks the logic of the program
     if !ismissing(row.actual_delivery_date) && row.actual_delivery_date < today()
         return 1 #already delivered
     elseif !ismissing(row.hub_arrival_date)
@@ -19,7 +28,4 @@ function determine_tracking_status(row)
     
 end
 
-# Determines where the shipment was last seen.
-# Already Delivered(1), At a Hub(2) or at a Supplier(3) ['pickup planned']
-# Return 0 if the row is missing.
-# To be used for ETA calculation in various classify function.
+
