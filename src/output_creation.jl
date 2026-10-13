@@ -3,7 +3,17 @@ using DataFrames
 using Typstry
 using PrettyTables
 
-# Function that flag the late or urgent items
+"""
+    flagging(shipment_delivery_status) -> Symbol
+
+Severity of a delivery status code, used for the report's `Severity` column:
+
+- `missing` (item skipped by the main pipeline) → `:watch`
+- `6` (urgent) → `:critical`
+- `8` (delivered late) → `:late_arrival`
+- `5` (at risk) → `:watch`
+- anything else (`4`, `7`) → `:ok`
+"""
 function flagging(shipment_delivery_status)
     if ismissing(shipment_delivery_status)
         return :watch
@@ -18,7 +28,12 @@ function flagging(shipment_delivery_status)
     end
 end
 
-# Function that colors each row based on the severity of the Delivery Status and add a Unicode to it
+"""
+    icon_for(severity) -> String
+
+Icon shown in the report for a severity: `:critical` → 🚩,
+`:late_arrival` → ❌, `:watch` → ⚠️, anything else → ✓.
+"""
 function icon_for(severity)
     if severity == :critical
         return "🚩"
@@ -31,14 +46,24 @@ function icon_for(severity)
     end
 end
 
-# Creating a function for the datframe with only the important item
+"""
+    building_dataframe(joined) -> DataFrame
+
+Item details for the report, one row per item of `joined`, with the columns
+`Project_ID`, `Shipment_ID`, `Items_Number` and `Material`.
+"""
 function building_dataframe(joined)
     final_data_frame = DataFrame(Project_ID = joined[!, :project_id], Shipment_ID = joined[!, :shipment_id], Items_Number = joined[!, :item_code], Material = joined[!, :material])
     return final_data_frame
 end
 
-# Push all the delivery status and ETA into a small dataframe
-# Creation of a small data set for items not in joined
+"""
+    building_small(row_collector) -> DataFrame
+
+Turn the main pipeline's `row_collector`, a list of
+`(item_code, status, eta)` tuples, into a table with the columns
+`Delivery_Status`, `ETA` and `Items_Number`, one row per classified item.
+"""
 function building_small(row_collector)  
     items_code = getindex.(row_collector, 1)
     del_values = getindex.(row_collector, 2)
@@ -47,7 +72,14 @@ function building_small(row_collector)
     return small_data_frame
 end
 
-# Need to left join row collector with df
+"""
+    all_together(final_data_frame, small_data_frame) -> DataFrame
+
+Build the final report: left-join the classification results onto the item
+details by `Items_Number`, keeping the row order of `final_data_frame`, then
+add the columns `Severity` (from `flagging`) and `Icon` (from `icon_for`).
+Items the main pipeline skipped keep an empty status and get `:watch` / ⚠️.
+"""
 function all_together(final_data_frame, small_data_frame)
     report = leftjoin(final_data_frame, small_data_frame, on = :Items_Number, order = :left)
     report.Severity = flagging.(report.Delivery_Status)
@@ -55,7 +87,15 @@ function all_together(final_data_frame, small_data_frame)
     return report
 end 
 
-# Creating a function that print a PDF file
+"""
+    export_pdf(report::DataFrame) -> String
+
+Export the report as a PDF: PrettyTables turns the report into a Typst
+table, which is placed in an A4 page layout with the page number in the
+header. The Typst source is written to `Final_Report.typ` and compiled to
+`Final_Report.pdf` in the current folder. Returns the PDF file name.
+Not called by main; kept as an alternative to export_csv.
+"""
 function export_pdf(report::DataFrame)
     table = pretty_table(String, report; backend = :typst)
 
@@ -74,13 +114,27 @@ function export_pdf(report::DataFrame)
 
 end
 
+"""
+    export_csv(report::DataFrame, file_name = "Final_Report.csv") -> String
+
+Write the final report to a semicolon-separated CSV file in the current
+folder and return the file name.
+
+The semicolon separator lets the file open correctly in German and
+European Excel. Severities are written as plain text (e.g. `late_arrival`)
+and missing values as empty cells.
+"""
 function export_csv(report::DataFrame, file_name = "Final_Report.csv")
     CSV.write(file_name, report; delim = ";")
     return file_name
 end
  
-# Displaying of the final report both in VS Code and in the terminal
-# Create a function to be recall later
+"""
+    pdf_creation(report) -> String
+
+Show a preview of the report, then export it with
+`export_csv` and return the file name.
+"""
 function pdf_creation(report)
     if isdefined(Main, :vscodedisplay)
         vscodedisplay(report)
