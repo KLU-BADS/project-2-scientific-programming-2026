@@ -13,5 +13,6 @@ include("helpers.jl")
     include("test_data_loader.jl")
     include("test_classification.jl")
     include("test_main_pipeline.jl")
+    include("test_output.jl")
     include("test_integration.jl")
 end
