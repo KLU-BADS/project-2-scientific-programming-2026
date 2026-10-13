@@ -86,7 +86,7 @@ function pdf_creation(report)
         vscodedisplay(report)
     else
         println("\n--- Preview of the Final Report ---")
-        show(report, maxrows = 50, allcols = true)
+        show(first(report, 50), allcols = true)
     end
     return export_csv(report)
 end
