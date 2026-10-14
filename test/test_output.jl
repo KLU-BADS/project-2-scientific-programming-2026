@@ -70,5 +70,17 @@
             @test report.Icon == ["✓", "⚠️", "❌"]
         end
 
+        @testset "export_csv" begin
+            report = DataFrame(Items_Number = ["A1", "B2"], Severity = [:ok, :watch])
+            file_name = joinpath(mktempdir(), "test_report.csv")
+            # Returns the file name it wrote to.
+            @test Project2.export_csv(report, file_name) == file_name
+            @test isfile(file_name)
+            lines = readlines(file_name)
+            # Header and rows are separated by semicolons; symbols are written as plain text.
+            @test lines[1] == "Items_Number;Severity"
+            @test lines[3] == "B2;watch"
+        end
+
     end
 end
