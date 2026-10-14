@@ -7,7 +7,7 @@ Decide where the shipment of one row of `joined` was last seen. The checks
 run in this order, as in the activity diagram:
 
 - `0`: the row is `missing`
-- `1` (already delivered): `actual_delivery_date` is known and before `today()`
+- `1` (already delivered): `scm_actual_delivery_date` is known and before `today()`
 - `2` (at a hub): `hub_arrival_date` is known
 - `3` (at supplier): otherwise
 
