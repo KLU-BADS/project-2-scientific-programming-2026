@@ -35,7 +35,7 @@ function make_row(;
         project_id = project_id,
         shipment_id = shipment_id,
         requested_delivery_date = requested_delivery_date,
-        actual_delivery_date = actual_delivery_date,
+        scm_actual_delivery_date = scm_actual_delivery_date,
         hub_arrival_date = hub_arrival_date,
         pickup_planned_date = pickup_planned_date,
         pickup_actual_date = pickup_actual_date,
