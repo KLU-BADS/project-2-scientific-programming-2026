@@ -1,7 +1,5 @@
 # Libraries
 using DataFrames
-using Typstry
-using PrettyTables
 
 """
     flagging(shipment_delivery_status) -> Symbol
@@ -86,33 +84,6 @@ function all_together(final_data_frame, small_data_frame)
     report.Icon = icon_for.(report.Severity)
     return report
 end 
-
-"""
-    export_pdf(report::DataFrame) -> String
-
-Export the report as a PDF: PrettyTables turns the report into a Typst
-table, which is placed in an A4 page layout with the page number in the
-header. The Typst source is written to `Final_Report.typ` and compiled to
-`Final_Report.pdf` in the current folder. Returns the PDF file name.
-Not called by main; kept as an alternative to export_csv.
-"""
-function export_pdf(report::DataFrame)
-    table = pretty_table(String, report; backend = :typst)
-
-    typst_doc = """
-    #set page(
-        paper: "a4",
-        margin: (top: 1.5cm, bottom: 1.5cm, left: 1cm, right: 1cm),
-        header: align(right)[Project Report - Page #context counter(page).display()]
-    )
-    #set text(font: ("Libertinus Serif", "Segoe UI Emoji", "Apple Color Emoji"), size: 11pt)
-    $table
-"""
-    write("Final_Report.typ", typst_doc)
-    run(typst`compile Final_Report.typ Final_Report.pdf`)
-    return "Final_Report.pdf"
-
-end
 
 """
     export_csv(report::DataFrame, file_name = "Final_Report.csv") -> String
