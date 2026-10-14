@@ -197,7 +197,7 @@ function main(; risk_interval::Int = DEFAULT_RISK_INTERVAL, data_folder = DEFAUL
     final_data_frame = building_dataframe(data.joined)
     small_data_frame = building_small(row_collector)
     report = all_together(final_data_frame, small_data_frame)
-    pdf_creation(report)
+    report_creation(report)
     
     return (report = report, summary = summary, issues = issues)
 end
