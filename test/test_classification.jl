@@ -5,18 +5,18 @@
 
     @testset "determine_tracking_status" begin
         # Delivery date in the past -> 1 (already delivered).
-        @test Project2.determine_tracking_status(make_row(actual_delivery_date = TODAY - Day(10))) == 1
+        @test Project2.determine_tracking_status(make_row(scm_actual_delivery_date = TODAY - Day(10))) == 1
         # Only a hub arrival date -> 2 (at a hub).
         @test Project2.determine_tracking_status(make_row(hub_arrival_date = TODAY - Day(2))) == 2
         # No delivery date and no hub date -> 3 (at supplier).
         @test Project2.determine_tracking_status(make_row()) == 3
         # Delivered and also a hub date -> 1: delivery is checked first, as in the activity diagram.
-        @test Project2.determine_tracking_status(make_row(actual_delivery_date = TODAY - Day(10),
+        @test Project2.determine_tracking_status(make_row(scm_actual_delivery_date = TODAY - Day(10),
                                                  hub_arrival_date = TODAY - Day(15))) == 1
         # Boundary: a delivery date of today is not "before today", so the item is not delivered yet (here: no hub date -> 3).
-        @test Project2.determine_tracking_status(make_row(actual_delivery_date = TODAY)) == 3
+        @test Project2.determine_tracking_status(make_row(scm_actual_delivery_date = TODAY)) == 3
         # A delivery date in the future is ignored; the hub date decides -> 2.
-        @test Project2.determine_tracking_status(make_row(actual_delivery_date = TODAY + Day(5),
+        @test Project2.determine_tracking_status(make_row(scm_actual_delivery_date = TODAY + Day(5),
                                                  hub_arrival_date = TODAY - Day(1))) == 2
         # A missing row returns 0 instead of crashing.
         @test Project2.determine_tracking_status(missing) == 0

@@ -14,13 +14,13 @@
 
     @testset "classify_row: delivered" begin
         # Delivered before the RDD: stage 1, status 7, and the ETA shown in the report is the actual delivery date.
-        result = classify_row(make_row(actual_delivery_date = TODAY - Day(10),
+        result = classify_row(make_row(scm_actual_delivery_date = TODAY - Day(10),
                                        requested_delivery_date = TODAY - Day(5)),
                               TEST_HUB_LANES, TEST_SUPPLIER_LANES)
         @test result == (stage = 1, status = 7, eta = TODAY - Day(10))
 
         # Delivered after the RDD: status 8.
-        result = classify_row(make_row(actual_delivery_date = TODAY - Day(3),
+        result = classify_row(make_row(scm_actual_delivery_date = TODAY - Day(3),
                                        requested_delivery_date = TODAY - Day(10)),
                               TEST_HUB_LANES, TEST_SUPPLIER_LANES)
         @test result.status == 8
@@ -32,7 +32,7 @@
         @test result == (stage = 2, status = 4, eta = TODAY + Day(3))
 
         # A delivery date in the future doesn't count yet, so main follow determine_tracking_status and uses the hub branch.
-        result = classify_row(make_row(actual_delivery_date = TODAY + Day(5),
+        result = classify_row(make_row(scm_actual_delivery_date = TODAY + Day(5),
                                        hub_arrival_date = TODAY - Day(1)),
                               TEST_HUB_LANES, TEST_SUPPLIER_LANES)
         @test result.stage == 2
@@ -66,7 +66,7 @@
     @testset "build_report" begin
         # Seven rows: three that can be classified, one inactive and three that must be skipped with an issue.
         joined = DataFrame([
-            make_row(item_code = "DEL", actual_delivery_date = TODAY - Day(10),
+            make_row(item_code = "DEL", scm_actual_delivery_date = TODAY - Day(10),
                      requested_delivery_date = TODAY - Day(5)),
             make_row(item_code = "HUB", hub_arrival_date = TODAY),
             make_row(item_code = "SUP", pickup_planned_date = TODAY,
