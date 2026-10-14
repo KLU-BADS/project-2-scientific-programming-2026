@@ -77,7 +77,7 @@ function classify_row(row, hub_lanes, supplier_lanes; risk_interval::Int = DEFAU
     stage = determine_tracking_status(row)
 
     if stage == STAGE_DELIVERED
-        eta = row.actual_delivery_date
+        eta = row.scm_actual_delivery_date
         status = classify_delivered(row.requested_delivery_date, eta)
 
     elseif stage == STAGE_AT_HUB
