@@ -33,7 +33,7 @@ If only a hub arrival date is present, then the item is on the final leg of tran
 If only a planned pickup date is available, then the item has not yet been collected. The program applies the full transit time from the lane matrix to estimate the expected arrival and classifies the item’s likelihood of arriving late.
 
 #### Output:
-The program produces an array with the project identification number, shipment identification number, and item number, in which every item has an assigned delivery status, an estimated date of arrival, and the tracking stage based on the classification. It also provides a summary of all active shipments, their delivery states, as well as the number of shipments requiring immediate attention.
+The program produces an array with the project identification number, shipment identification number, and item number, with each item assigned a delivery status, an estimated date of arrival, and a tracking stage based on the classification. It also provides a summary of all active shipments, their delivery states, as well as the number of shipments requiring immediate attention.
   
 
 <!-- DESCRIBE PROJECT PURPOSE ABOVE  -->
@@ -58,7 +58,7 @@ Once the package is cloned, you can run:
 using Project2
 main()
 ```
-to print the Final Report in CSV file format to standard output.
+to print a Final_Report.CSV in the outputs folder and display a preview of the tables in the terminal (standard output).
 <!-- DESCRIBE THE ESSENTIAL USAGE ABOVE -->
 
 ## Tests
