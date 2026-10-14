@@ -106,7 +106,7 @@ end
 Show a preview of the report, then export it with
 `export_csv` and return the file name.
 """
-function pdf_creation(report)
+function report_creation(report)
     if isdefined(Main, :vscodedisplay)
         vscodedisplay(report)
     else
