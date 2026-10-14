@@ -66,7 +66,7 @@ end
 Classify one row of `joined`, following the branches of the activity
 diagram:
 
-- delivered (1): status from `classify_delivered` (7 or 8); the ETA is the actual delivery date
+- delivered (1): status from `classify_delivered` (7 or 8); the ETA is the scm actual delivery date
 - at a hub (2): ETA from `classify_hub`, status from `shipment_delivery_status` (4, 5 or 6)
 - at supplier (3): ETA from `classify_pickup` using the actual pickup date if known, otherwise the planned one; status from `shipment_delivery_status` (4, 5 or 6)
 
