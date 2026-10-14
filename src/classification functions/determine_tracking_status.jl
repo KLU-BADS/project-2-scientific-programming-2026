@@ -18,7 +18,7 @@ function determine_tracking_status(row)
    if ismissing(row)
         return 0 #missing
     end
-    if !ismissing(row.actual_delivery_date) && row.actual_delivery_date < today()
+    if !ismissing(row.scm_actual_delivery_date) && row.scm_actual_delivery_date < today()
         return 1 #already delivered
     elseif !ismissing(row.hub_arrival_date)
         return 2 #at a Hub
