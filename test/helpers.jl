@@ -22,7 +22,7 @@ function make_row(;
     project_id = "P-1",
     shipment_id = "S-1",
     requested_delivery_date = TODAY + Day(20),
-    actual_delivery_date = missing,
+    scm_actual_delivery_date = missing,
     hub_arrival_date = missing,
     pickup_planned_date = missing,
     pickup_actual_date = missing,
