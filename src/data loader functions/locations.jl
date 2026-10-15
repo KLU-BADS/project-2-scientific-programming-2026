@@ -53,7 +53,7 @@ function location_id(value, location_ids)
     # haskey(collection,key) returns true if the collection conatins a key and flase if otherwise
     # Here has key is negated and returns true if the location id is not present in the dictionary
     if !haskey(location_ids, name)
-        error("Unknwon location: '$value'")
+        error("Unknown location: '$value'")
     end 
 
     # Return the numeric ID associated with the cleaned location name.
