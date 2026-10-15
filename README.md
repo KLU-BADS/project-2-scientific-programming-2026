@@ -15,13 +15,14 @@ This tool automates the classification of supply chain order items by combining 
 In a supply chain, items can be at various stages of transit at any given time. This makes it difficult to identify at-risk deliveries without manual inspection. This program determines, without requiring manual input, for every tracked item, whether it is on track, at risk, or has already been delivered (on time or late).
 
 #### Data Sources:
-This tool is based upon three datasets. 
-- Internal dataset (internal_bd.csv): provides the order item master data.
-- Supply chain dataset (SCM_db.csv): provides shipment-level logistics data, specifically pickup city and the three key milestone dates:
+This tool is based upon four datasets. 
+- Internal dataset (Internal_bd.csv): provides the order item master data.
+- Supply chain dataset (SCM_db.csv): provides shipment-level logistics data, specifically pickup city and the four key milestone dates:
   - Leg 1 Pickup Planned (date),
+  - Leg 1 Pickup Actual (date),
   - Leg 1 Hub Arrival (date),
   - Leg n Delivery Actual (date). 
-- Lane transit matrix: provides a lookup table mapping origin cities to destination hubs with an estimated transit time in days.
+- Two lane transit matrices (lm_supplier_dc.csv and lm_logistics_dc.csv): lookup tables mapping origin cities to destination hubs with an estimated transit time in days.
 
 #### How it works:
 After loading and cleaning the data, each order item is matched to its corresponding shipment via an identifier. The program then inspects the shipment record to determine the last known milestone date, which defines one of three tracking stages.
@@ -33,7 +34,7 @@ If only a hub arrival date is present, then the item is on the final leg of tran
 If only a planned pickup date is available, then the item has not yet been collected. The program applies the full transit time from the lane matrix to estimate the expected arrival and classifies the item’s likelihood to arrive late.
 
 #### Output:
-The program produces an array with the project identification number, shipment identification number, and item number, in which every item has an assigned delivery status, an estimated date of arrival, and the tracking stage based on the classification. It also provides a summary of all active shipments, their delivery states, as well as the number of shipments requiring immediate attention.
+The program writes the file `Final_Report.csv` (semicolon-separated). Each row is one order item, with the columns Project_ID, Shipment_ID, Items_Number, Material, Delivery_Status, ETA, Severity and Icon. It also prints a summary with the number of items per status and the number of urgent items.
   
 
 <!-- DESCRIBE PROJECT PURPOSE ABOVE  -->
