@@ -4,7 +4,7 @@
 Convert one cell of a lane matrix into a whole number of transit days.
 
 An empty cell becomes `missing`. Text, decimals and negative numbers throw
-an `ArgumentError`. `value` must be a string.
+an `ArgumentError`. `value` may be a string or `missing`.
 
 # Examples
 ```julia
@@ -13,17 +13,16 @@ parse_lane_days("abc")   # throws ArgumentError
 ```
 """
 function parse_lane_days(value)
-    # Remove all whitespaces preceeding and superceeding the cell value 
-    text = strip(value)
+       # Trim the cell; empty and missing cells both become missing
+    text = clean_text(value)
 
-    # If cells don't contain a value they will be turned into a missing value 
-    if isempty(text)
-        return missing 
+    if ismissing(text)
+        return missing
     end
 
     days = tryparse(Int, text) # if values couldn't be turned into an integer value they Julia will insert "nothing" 
     
-    if days == nothing 
+    if isnothing(days)
         throw(ArgumentError("Expected a whole number of days, but found: '$value'"))
     end 
 
@@ -99,7 +98,7 @@ function parse_quantity(value)
         return missing 
     end 
 
-    #allows patterns like 1234; -12; +12, 1,234.5; 1,234,567; 89 and rejects everything else 
+    # Allows patterns like 1234, +12, 1,234.5 and 1,234,567; rejects everything else (negative numbers included)
     pattern = r"^[+]?(?:\d+|\d{1,3}(?:,\d{3})+)(?:\.\d+)?$"
 
     if !occursin(pattern, text)

@@ -32,7 +32,7 @@ Clean the internal order table (`Internal_db.csv`).
 Keeps and renames nine columns: Active → `active`, Business Unit →
 `business_unit`, Material → `material`, Item Code → `item_code`, Quantity →
 `quantity`, Project ID → `project_id`, k EUR → `k_eur`, RDD →
-`requested_delivery_date`, CDD → `actual_delivery_date`. All values are
+`requested_delivery_date`, CDD → `customer_desired_date`. All values are
 trimmed with `clean_text`, then `active` becomes `Bool`, `quantity` and
 `k_eur` become `Float64` and both dates become `Date`. Other columns are
 dropped.
@@ -48,7 +48,7 @@ function clean_internal(raw_table)
         "Project ID" => :project_id,
         "k EUR" => :k_eur,
         "RDD" => :requested_delivery_date,
-        "CDD" => :actual_delivery_date 
+        "CDD" => :customer_desired_date
     )  
     for column in names(table)
         convert_column!(table, column, clean_text)
@@ -61,7 +61,7 @@ function clean_internal(raw_table)
     end 
 
     # Calling the date formatting function 
-    for column in (:requested_delivery_date, :actual_delivery_date)
+     for column in (:requested_delivery_date, :customer_desired_date)
         convert_column!(table, column, parse_delivery_date)
     end 
 

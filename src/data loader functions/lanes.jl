@@ -63,20 +63,20 @@ function build_lane_lookup(matrix, location_ids)
 end 
 
 """
-    lanes_to_dataframe(lane) -> DataFrame
+    lanes_to_dataframe(lanes) -> DataFrame
 
 Turn a lane lookup back into a table with the columns `origin_id`,
 `destination_id` and `day`, sorted by origin and destination. Used by
 `export_tables`.
 """
-function lanes_to_dataframe(lane)
+function lanes_to_dataframe(lanes)
     table = DataFrame(
         origin_id = Int[],
         destination_id = Int[],
         day = Int[]
     )
 
-    for lane in values(lane)
+     for lane in values(lanes)
         push!(table, (
             origin_id = lane.origin_id,
             destination_id = lane.destination_id,

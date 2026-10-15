@@ -63,10 +63,10 @@ Turn the main pipeline's `row_collector`, a list of
 `Delivery_Status`, `ETA` and `Items_Number`, one row per classified item.
 """
 function building_small(row_collector)  
-    items_code = getindex.(row_collector, 1)
-    del_values = getindex.(row_collector, 2)
-    final_time = getindex.(row_collector, 3)  
-    small_data_frame = DataFrame(Delivery_Status = del_values, ETA = final_time, Items_Number = items_code)
+    item_codes = getindex.(row_collector, 1)
+    delivery_statuses = getindex.(row_collector, 2)
+    estimated_arrivals = getindex.(row_collector, 3)
+    small_data_frame = DataFrame(Delivery_Status = delivery_statuses, ETA = estimated_arrivals, Items_Number = item_codes)
     return small_data_frame
 end
 
@@ -101,7 +101,7 @@ function export_csv(report::DataFrame, file_name = "Final_Report.csv")
 end
  
 """
-    pdf_creation(report) -> String
+    report_creation(report) -> String
 
 Show a preview of the report, then export it with
 `export_csv` and return the file name.

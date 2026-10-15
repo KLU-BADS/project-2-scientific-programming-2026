@@ -1,7 +1,7 @@
 using Dates
 
 """
-    classify_delivered(required_delivery_date::Date, actual_delivery_date::Date) -> Int
+    classify_delivered(requested_delivery_date::Date, actual_delivery_date::Date) -> Int
 
 Grade an item that has already been delivered against its requested
 delivery date (RDD):
@@ -19,10 +19,10 @@ classify_delivered(Date(2026, 9, 29), Date(2026, 9, 26))   # 7
 ```
 """
 function classify_delivered(
-    required_delivery_date::Date,
+    requested_delivery_date::Date,
     actual_delivery_date::Date
 )
-    if actual_delivery_date > required_delivery_date
+     if actual_delivery_date > requested_delivery_date
         return 8  # Delivered late
     else
         return 7  # Delivered on time

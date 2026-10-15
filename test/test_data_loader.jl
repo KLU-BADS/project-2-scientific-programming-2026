@@ -42,6 +42,8 @@
         @test Project2.parse_lane_days(" 3 ") == 3
         # Empty cell becomes missing.
         @test ismissing(Project2.parse_lane_days(""))
+        # A missing cell stays missing instead of crashing.
+        @test ismissing(Project2.parse_lane_days(missing))
         # Text, decimals and negative days are rejected with a clear error.
         @test_throws ArgumentError Project2.parse_lane_days("abc")
         @test_throws ArgumentError Project2.parse_lane_days("1.5")
@@ -125,18 +127,18 @@
         )
         internal = Project2.clean_internal(raw_table)
 
-        # Keeps only the needed columns and gives them the names the rest of the program uses (RDD -> requested_delivery_date, CDD -> actual_delivery_date).
+        # Keeps only the needed columns and gives them the names the rest of the program uses (RDD -> requested_delivery_date, CDD -> customer_desired_date).
         @test names(internal) == ["active", "business_unit", "material", "item_code", "quantity",
-                                  "project_id", "k_eur", "requested_delivery_date", "actual_delivery_date"]
+                                  "project_id", "k_eur", "requested_delivery_date", "customer_desired_date"]
         # Each column gets its proper type.
         @test internal.active == [true, false]
         @test internal.item_code == ["ITEM-1", "ITEM-2"]
         @test internal.quantity == [1234.5, 2.0]
         @test internal.k_eur == [10.0, 20.5]
         @test internal.requested_delivery_date == [Date(2026, 9, 27), Date(2026, 10, 1)]
-        @test internal.actual_delivery_date[1] == Date(2026, 9, 25)
+        @test internal.customer_desired_date[1] == Date(2026, 9, 25)
         # An empty CDD stays missing (item not delivered yet).
-        @test ismissing(internal.actual_delivery_date[2])
+        @test ismissing(internal.customer_desired_date[2])
     end
 
     @testset "clean_scm" begin
