@@ -11,8 +11,9 @@ run in this order, as in the activity diagram:
 - `2` (at a hub): `hub_arrival_date` is known
 - `3` (at supplier): otherwise
 
-Because of `today()`, the same row can move from stage 2 or 3 to stage 1 as
-the calendar moves on.
+The SCM delivery dates in the data all lie in the past, so `today()` does not
+change the result on the current data. A delivery dated on the run day
+counts as not delivered yet.
 """
 function determine_tracking_status(row)
    if ismissing(row)
