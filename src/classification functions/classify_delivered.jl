@@ -22,7 +22,7 @@ function classify_delivered(
     requested_delivery_date::Date,
     actual_delivery_date::Date
 )
-     if actual_delivery_date > requested_delivery_date
+    if actual_delivery_date > requested_delivery_date
         return 8  # Delivered late
     else
         return 7  # Delivered on time
