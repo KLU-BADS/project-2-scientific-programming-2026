@@ -76,7 +76,7 @@ function lanes_to_dataframe(lanes)
         day = Int[]
     )
 
-     for lane in values(lanes)
+    for lane in values(lanes)
         push!(table, (
             origin_id = lane.origin_id,
             destination_id = lane.destination_id,

@@ -14,7 +14,8 @@ const DEFAULT_RISK_INTERVAL = 2
 """
     DEFAULT_DATA_FOLDER
 
-Folder with the four input CSV files: `data/` in the repository root
+Folder with the four input CSV files: `data/` in the repository root,
+found relative to this file, so it works wherever Julia was started.
 """
 const DEFAULT_DATA_FOLDER = normpath(joinpath(@__DIR__, "..", "data"))
 

@@ -13,7 +13,7 @@ parse_lane_days("abc")   # throws ArgumentError
 ```
 """
 function parse_lane_days(value)
-       # Trim the cell; empty and missing cells both become missing
+# Trim the cell; empty and missing cells both become missing
     text = clean_text(value)
 
     if ismissing(text)
