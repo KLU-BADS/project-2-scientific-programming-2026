@@ -13,12 +13,11 @@ parse_lane_days("abc")   # throws ArgumentError
 ```
 """
 function parse_lane_days(value)
-    # Remove all whitespaces preceeding and superceeding the cell value 
-    text = strip(value)
+       # Trim the cell; empty and missing cells both become missing
+    text = clean_text(value)
 
-    # If cells don't contain a value they will be turned into a missing value 
-    if isempty(text)
-        return missing 
+    if ismissing(text)
+        return missing
     end
 
     days = tryparse(Int, text) # if values couldn't be turned into an integer value they Julia will insert "nothing" 
