@@ -16,7 +16,7 @@ In a supply chain, items can be at various stages of transit at any given time. 
 
 #### Data Sources:
 This tool is based upon four datasets. 
-- Internal dataset (Internal_bd.csv): provides the order item master data.
+- Internal dataset (Internal_db.csv): provides the order item master data.
 - Supply chain dataset (SCM_db.csv): provides shipment-level logistics data, specifically pickup city and the four key milestone dates:
   - Leg 1 Pickup Planned (date),
   - Leg 1 Pickup Actual (date),
