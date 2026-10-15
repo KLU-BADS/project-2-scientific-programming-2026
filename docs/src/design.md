@@ -105,7 +105,7 @@ ItemClassification --> DeliveryStatus   : status
 
 ## Components and responsibilities
 
-OrderItem represents a single line item from the internal order management database. It holds the item's identity, quantity, financial value, destination distribution centre, and the two key dates the programme works against: the Requested Delivery Date (RDD), which the programme works against, and the Customer Desired Date (CDD), which is read from the file but not used in the classification.
+OrderItem represents a single line item from the internal order management database. It holds the item's identity, quantity, financial value, destination distribution centre, and two dates: the Requested Delivery Date (RDD), which the programme works against, and the Customer Desired Date (CDD), which is read from the file but not used in the classification. Each order item is the primary unit being tracked.
 
 Shipment represents the logistics record from the external SCM system. It captures where an item is being collected from, where it is going, and the four milestone dates that record how far along in transit the shipment has progressed: the planned pickup date, the actual pickup date, the hub arrival date, and the actual delivery date.
 
