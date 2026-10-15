@@ -52,13 +52,39 @@ julia --project=.
 
 
 <!-- DESCRIBE THE ESSENTIAL USAGE BELOW -->
-Once the package is cloned you can run:
+### Setup
+
+Julia 1.12 or newer is required. After cloning, the packages this project
+depends on are not on your machine yet. Download and build them once.
+
+Start Julia in the project folder, using the project's own environment:
+
+```bash
+julia --project=.
+```
+
+Then run the package manager command that installs everything listed in
+`Project.toml`:
+
+```julia
+using Pkg
+Pkg.instantiate()
+```
+
+### Run
+
+Start Julia with `julia --project=.` and run:
 
 ```julia
 using Project2
 main()
 ```
-to print "Hello World" to standard output.
+
+`main()` reads the four CSV files in `data/`, classifies every order item,
+prints a short summary and writes the report to `Final_Report.csv` in the
+current folder. The file is separated by semicolons, so it opens correctly
+in Excel.
+
 <!-- DESCRIBE THE ESSENTIAL USAGE ABOVE -->
 
 ## Tests
