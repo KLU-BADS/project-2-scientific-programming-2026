@@ -14,7 +14,7 @@ const DEFAULT_RISK_INTERVAL = 2
 """
     DEFAULT_DATA_FOLDER
 
-Folder with the four input CSV files
+Folder with the four input CSV files: `data/` in the repository root
 """
 const DEFAULT_DATA_FOLDER = normpath(joinpath(@__DIR__, "..", "data"))
 
@@ -125,7 +125,7 @@ function build_report(joined, hub_lanes, supplier_lanes; risk_interval::Int = DE
             continue
         end
         if ismissing(row.pickup_location_id) || ismissing(row.delivery_location_id)
-            push!(issues, "Item $(row.item_code): unknown pickup or delivery location, skipped")
+            push!(issues, "Item $(row.item_code): missing pickup or delivery location, skipped")
             continue
         end
 
