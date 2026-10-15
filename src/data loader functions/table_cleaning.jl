@@ -61,7 +61,7 @@ function clean_internal(raw_table)
     end 
 
     # Calling the date formatting function 
-     for column in (:requested_delivery_date, :customer_desired_date)
+    for column in (:requested_delivery_date, :customer_desired_date)
         convert_column!(table, column, parse_delivery_date)
     end 
 
