@@ -105,7 +105,7 @@ ItemClassification --> DeliveryStatus   : status
 
 ## Components and responsibilities
 
-OrderItem represents a single line item from the internal order management database. It holds the item's identity, quantity, financial value, destination distribution centre, and the two key dates the programme works against: the Requested Delivery Date (RDD) and the Customer Desired Date (CDD). Each order item is the primary unit being tracked.
+OrderItem represents a single line item from the internal order management database. It holds the item's identity, quantity, financial value, destination distribution centre, and the two key dates the programme works against: the Requested Delivery Date (RDD), which the programme works against, and the Customer Desired Date (CDD), which is read from the file but not used in the classification.
 
 Shipment represents the logistics record from the external SCM system. It captures where an item is being collected from, where it is going, and the four milestone dates that record how far along in transit the shipment has progressed: the planned pickup date, the actual pickup date, the hub arrival date, and the actual delivery date.
 
@@ -117,7 +117,7 @@ ItemClassification is the output produced for each order item after the programm
 
 The enumerations TrackingStage and DeliveryStatus constrain the possible outcomes. TrackingStage has three values: DELIVERED, AT_HUB, and PICKUP_PLANNED, corresponding to the three branches of the classification logic. DeliveryStatus has five values: ON_TIME and LATE apply only to delivered items, while ON_TRACK, URGENT, and AT_RISK apply to items still in transit.
 
-## Classification logic.
+## Classification logic
 
 The program begins by joining each OrderItem to its corresponding Shipment via the item_code. Once joined, it inspects the shipment's milestone dates in order of priority to determine the TrackingStage. If a delivery actual date is present, the stage is DELIVERED and the actual date is compared directly against the RDD. If only a hub arrival date is available, the stage is AT_HUB and the LaneHub matrix is used to estimate the remaining transit time. If only a planned pickup date is available, the stage is PICKUP_PLANNED and the LanePickUpCity matrix is used to estimate the full journey. In all cases the result is written into an ItemClassification record for that item.
 
@@ -127,7 +127,7 @@ The programme requires four input sources: the internal order database containin
 
 ## Outputs
 
-The program produces an array with the project identification number, shipment identification number, and item number, in which every item has an assigned delivery status, an estimated date of arrival, and the tracking stage based on the classification. It also provides a summary of all active shipments, their delivery states, as well as the amount of shipments requiring immediate attention.
+The program writes the file `Final_Report.csv` (semicolon-separated). Each row is one order item, with the columns Project_ID, Shipment_ID, Items_Number, Material, Delivery_Status, ETA, Severity and Icon. It also prints a summary with the number of items per status and the number of urgent items.
 
 ---
 
