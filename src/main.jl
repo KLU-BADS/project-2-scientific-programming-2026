@@ -3,23 +3,48 @@ using DataFrames
 using Dates
 
 
-## Settings and status codes
-# Tolerance in days around the RDD.
+"""
+    DEFAULT_RISK_INTERVAL = 2
+
+Tolerance in days around the requested delivery date, used by
+`shipment_delivery_status`. It can be changed per run:
+`main(risk_interval = 3)`.
+"""
 const DEFAULT_RISK_INTERVAL = 2
-# Folder with the four input CSV files.
+"""
+    DEFAULT_DATA_FOLDER
+
+Folder with the four input CSV files: `data/` in the repository root,
+found relative to this file, so it works wherever Julia was started.
+"""
 const DEFAULT_DATA_FOLDER = normpath(joinpath(@__DIR__, "..", "data"))
 
-# Codes returned by the classification functions
+"Tracking stage 1, already delivered (from `determine_tracking_status`)."
 const STAGE_DELIVERED = 1             # determine_tracking_status
+"Tracking stage 2, at a hub (from `determine_tracking_status`)."
 const STAGE_AT_HUB = 2                # determine_tracking_status
+"Tracking stage 3, at the supplier (from `determine_tracking_status`)."
 const STAGE_AT_SUPPLIER = 3           # determine_tracking_status
+"Status 4, in transit and on time (from `shipment_delivery_status`)."
 const STATUS_ON_TIME = 4              # shipment_delivery_status
+"Status 5, in transit and at risk (from `shipment_delivery_status`)."
 const STATUS_AT_RISK = 5              # shipment_delivery_status
+"Status 6, in transit and urgent (from `shipment_delivery_status`)."
 const STATUS_URGENT = 6               # shipment_delivery_status
+"Status 7, delivered on time (from `classify_delivered`)."
 const STATUS_DELIVERED_ON_TIME = 7    # classify_delivered
+"Status 8, delivered late (from `classify_delivered`)."
 const STATUS_DELIVERED_LATE = 8       # classify_delivered
 
-## Init: load & check data
+"""
+    load_data(data_folder = DEFAULT_DATA_FOLDER) -> NamedTuple
+
+The Init step of the activity diagram: read the four CSV files, clean them,
+join each order item to its shipment (Item Code = product code), add the
+location IDs and build both lane lookups.
+
+Returns `(joined, hub_lanes, supplier_lanes)`.
+"""
 function load_data(data_folder = DEFAULT_DATA_FOLDER)
     raw = read_raw_data(data_folder)
 
@@ -36,12 +61,24 @@ function load_data(data_folder = DEFAULT_DATA_FOLDER)
     return (joined = joined, hub_lanes = hub_lanes, supplier_lanes = supplier_lanes)
 end
 
-# Classify one row
+"""
+    classify_row(row, hub_lanes, supplier_lanes; risk_interval = DEFAULT_RISK_INTERVAL) -> NamedTuple or nothing
+
+Classify one row of `joined`, following the branches of the activity
+diagram:
+
+- delivered (1): status from `classify_delivered` (7 or 8); the ETA is the scm actual delivery date
+- at a hub (2): ETA from `classify_hub`, status from `shipment_delivery_status` (4, 5 or 6)
+- at supplier (3): ETA from `classify_pickup` using the actual pickup date if known, otherwise the planned one; status from `shipment_delivery_status` (4, 5 or 6)
+
+Returns `(stage, status, eta)`, or `nothing` if the row cannot be
+classified (no tracking stage, or at supplier without any pickup date).
+"""
 function classify_row(row, hub_lanes, supplier_lanes; risk_interval::Int = DEFAULT_RISK_INTERVAL)
     stage = determine_tracking_status(row)
 
     if stage == STAGE_DELIVERED
-        eta = row.actual_delivery_date
+        eta = row.scm_actual_delivery_date
         status = classify_delivered(row.requested_delivery_date, eta)
 
     elseif stage == STAGE_AT_HUB
@@ -64,7 +101,19 @@ function classify_row(row, hub_lanes, supplier_lanes; risk_interval::Int = DEFAU
     return (stage = stage, status = status, eta = eta)
 end
 
-# Loop over all shipments
+"""
+    build_report(joined, hub_lanes, supplier_lanes; risk_interval = DEFAULT_RISK_INTERVAL) -> (row_collector, issues)
+
+The "repeat while Shipment left?" loop of the activity diagram. Classifies
+every active row of `joined` with `classify_row` and collects
+`(item_code, status, eta)` for each one in `row_collector`, the format
+`building_small` reads.
+
+Rows that are not active (Active is "no" or empty) are left out silently.
+Rows with a missing RDD, a missing pickup or delivery location, or no
+classification are skipped and described in `issues`, so one bad row never
+stops the run.
+"""
 function build_report(joined, hub_lanes, supplier_lanes; risk_interval::Int = DEFAULT_RISK_INTERVAL)
     row_collector = []          # Output: "this goes before the loop"
     issues = String[]
@@ -77,7 +126,7 @@ function build_report(joined, hub_lanes, supplier_lanes; risk_interval::Int = DE
             continue
         end
         if ismissing(row.pickup_location_id) || ismissing(row.delivery_location_id)
-            push!(issues, "Item $(row.item_code): unknown pickup or delivery location, skipped")
+            push!(issues, "Item $(row.item_code): missing pickup or delivery location, skipped")
             continue
         end
 
@@ -94,7 +143,14 @@ function build_report(joined, hub_lanes, supplier_lanes; risk_interval::Int = DE
     return row_collector, issues
 end
 
-# Summary
+"""
+    summarize(row_collector) -> NamedTuple
+
+Count the classified items per status code. Returns
+`(total_items, counts_by_status, immediate_attention_count)`, where
+`immediate_attention_count` is the number of urgent items (status 6).
+Skipped items are not counted.
+"""
 function summarize(row_collector)
     counts = Dict{Int,Int}()
     for (item_code, status, eta) in row_collector
@@ -108,7 +164,22 @@ function summarize(row_collector)
     )
 end
 
-# Entry point
+"""
+    main(; risk_interval = DEFAULT_RISK_INTERVAL, data_folder = DEFAULT_DATA_FOLDER)
+
+Run the whole program: load the data, classify every shipment, print the
+skipped items and a short summary, then build the report and export it as
+`Final_Report.csv` with the Output functions.
+
+Returns `(report, summary, issues)`.
+
+# Examples
+```julia
+using Project2
+result = main()
+result.summary.immediate_attention_count
+```
+"""
 function main(; risk_interval::Int = DEFAULT_RISK_INTERVAL, data_folder = DEFAULT_DATA_FOLDER)
     # Init (load & check data)
     data = load_data(data_folder)
@@ -127,7 +198,7 @@ function main(; risk_interval::Int = DEFAULT_RISK_INTERVAL, data_folder = DEFAUL
     final_data_frame = building_dataframe(data.joined)
     small_data_frame = building_small(row_collector)
     report = all_together(final_data_frame, small_data_frame)
-    pdf_creation(report)
+    report_creation(report)
     
     return (report = report, summary = summary, issues = issues)
 end

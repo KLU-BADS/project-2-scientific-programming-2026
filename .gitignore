@@ -13,3 +13,7 @@ Manifest.toml
 # Editors / OS
 .vscode/
 .DS_Store
+
+# Generated output
+/outputs/
+Final_Report.*

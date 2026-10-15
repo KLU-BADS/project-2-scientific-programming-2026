@@ -1,16 +1,28 @@
+"""
+    parse_lane_days(value) -> Union{Int, Missing}
 
+Convert one cell of a lane matrix into a whole number of transit days.
+
+An empty cell becomes `missing`. Text, decimals and negative numbers throw
+an `ArgumentError`. `value` may be a string or `missing`.
+
+# Examples
+```julia
+parse_lane_days(" 3 ")   # 3
+parse_lane_days("abc")   # throws ArgumentError
+```
+"""
 function parse_lane_days(value)
-    # Remove all whitespaces preceeding and superceeding the cell value 
-    text = strip(value)
+# Trim the cell; empty and missing cells both become missing
+    text = clean_text(value)
 
-    # If cells don't contain a value they will be turned into a missing value 
-    if isempty(text)
-        return missing 
+    if ismissing(text)
+        return missing
     end
 
     days = tryparse(Int, text) # if values couldn't be turned into an integer value they Julia will insert "nothing" 
     
-    if days == nothing 
+    if isnothing(days)
         throw(ArgumentError("Expected a whole number of days, but found: '$value'"))
     end 
 
@@ -21,7 +33,22 @@ function parse_lane_days(value)
     return days
 end 
 
+"""
+    parse_delivery_date(value) -> Union{Date, Missing}
 
+Convert a date cell into a `Date`.
+
+Accepts the European format day.month.year (one or two digits for day and
+month) and the ISO format year-month-day. A time after the date, such as
+`00:00:00`, is ignored. Empty cells become `missing`; any other format
+throws an `ArgumentError` instead of being guessed.
+
+# Examples
+```julia
+parse_delivery_date("27.09.2026")            # Date(2026, 9, 27)
+parse_delivery_date("2026-09-29 00:00:00")   # Date(2026, 9, 29)
+```
+"""
 function parse_delivery_date(value)
     text = clean_text(value)
 
@@ -50,13 +77,28 @@ function parse_delivery_date(value)
     end
 end
 
+"""
+    parse_quantity(value) -> Union{Float64, Missing}
+
+Convert a number written in American format into a `Float64`.
+
+Accepts an optional leading `+`, thousands separated by commas and an
+optional decimal part. The commas are removed before parsing. European
+format (`1.234,50`) and negative numbers throw an `ArgumentError`. Empty
+cells become `missing`.
+
+# Examples
+```julia
+parse_quantity("1,234.50")   # 1234.5
+```
+"""
 function parse_quantity(value)
     text = clean_text(value)
     if ismissing(text)
         return missing 
     end 
 
-    #allows patterns like 1234; -12; +12, 1,234.5; 1,234,567; 89 and rejects everything else 
+    # Allows patterns like 1234, +12, 1,234.5 and 1,234,567; rejects everything else (negative numbers included)
     pattern = r"^[+]?(?:\d+|\d{1,3}(?:,\d{3})+)(?:\.\d+)?$"
 
     if !occursin(pattern, text)
@@ -70,6 +112,18 @@ function parse_quantity(value)
     return parse(Float64, normalized)
 end 
 
+"""
+    parse_active(value) -> Union{Bool, Missing}
+
+Convert the Active column into a `Bool`: `"yes"` → `true`, `"no"` →
+`false`, in any casing. Any other text throws an `ArgumentError`; empty
+cells become `missing`.
+
+# Examples
+```julia
+parse_active(" No ")   # false
+```
+"""
 function parse_active(value)
     text = clean_text(value)
     
